@@ -28,7 +28,24 @@ Last verified: 2026-06-06 via `doctl compute droplet list` and SSH.
 | Service | Command / unit |
 |---------|------------------|
 | OpenSwarm Builder API | `systemctl status openswarm-builder-api` → `127.0.0.1:8090` |
-| Hermes gateway | `hermes --profile supersan gateway run` (user `claw`) |
+| OpenSwarm default orchestrator | `systemctl --user status openswarm-default` → port **8080** |
+| Hermes webapp (chat/voice) | `systemctl --user status hermes-webapp` → port **9119** |
+| Hermes gateway | `systemctl --user status hermes-supersan` → Telegram/Slack/etc. |
+
+### Public URLs (HTTP basic auth — `/etc/nginx/.htpasswd`)
+
+| URL | What |
+|-----|------|
+| http://209.97.152.67/ | Hermes Super Agent web chat (`/chat`) and voice (`/voice`) |
+| http://209.97.152.67/openswarm/docs | OpenSwarm orchestrator API docs (Swagger) |
+| http://209.97.152.67/openswarm/open-swarm/get_metadata | Orchestrator metadata (programmatic) |
+
+Builder API stays localhost-only: `http://127.0.0.1:8090` (SSH tunnel if needed from laptop).
+
+### Skills installed
+
+- `vault/skills/active/tools/openswarm-builder.md` — portable builder skill (design → approve → build)
+- `vault/skills/active/tools/openswarm.md` — Hermes runtime routing skill
 
 ### Env
 

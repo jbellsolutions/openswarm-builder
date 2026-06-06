@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OpenSwarm Orchestrator</title>
+  <style>
+    :root { color-scheme: dark; font-family: system-ui, sans-serif; }
+    body { margin: 0; max-width: 720px; margin-inline: auto; padding: 1rem; background: #0f1115; color: #e8eaed; }
+    h1 { font-size: 1.25rem; margin-bottom: 0.25rem; }
+    p.sub { color: #9aa0a6; font-size: 0.875rem; margin-top: 0; }
+    #log { border: 1px solid #333; border-radius: 8px; min-height: 280px; max-height: 50vh; overflow-y: auto; padding: 0.75rem; margin: 1rem 0; background: #16181d; }
+    .msg { margin: 0.5rem 0; white-space: pre-wrap; word-break: break-word; }
+    .user { color: #8ab4f8; }
+    .bot { color: #ce9178; }
+    .err { color: #f28b82; }
+    form { display: flex; gap: 0.5rem; }
+    textarea { flex: 1; min-height: 3rem; border-radius: 8px; border: 1px solid #444; background: #16181d; color: inherit; padding: 0.5rem; }
+    button { border-radius: 8px; border: none; background: #1a73e8; color: #fff; padding: 0.5rem 1rem; font-weight: 600; }
+    button:disabled { opacity: 0.5; }
+  </style>
+</head>
+<body>
+  <h1>OpenSwarm Orchestrator</h1>
+  <p class="sub">Talks to <code>/open-swarm/get_completion</code> on the VPS swarm. Same nginx login as the Hermes dashboard.</p>
+  <div id="log"></div>
+  <form id="f">
+    <textarea id="msg" placeholder="Ask the orchestrator…" required></textarea>
+    <button type="submit" id="send">Send</button>
+  </form>
+  <script>
+    const log = document.getElementById('log');
+    const form = document.getElementById('f');
+    const msg = document.getElementById('msg');
+    const send = document.getElementById('send');
+
+    function append(cls, text) {
+      const d = document.createElement('div');
+      d.className = 'msg ' + cls;
+      d.textContent = text;
+      log.appendChild(d);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const text = msg.value.trim();
+      if (!text) return;
+      append('user', 'You: ' + text);
+      msg.value = '';
+      send.disabled = true;
+      try {
+        const r = await fetch('/openswarm/open-swarm/get_completion', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text }),
+        });
+        const body = await r.text();
+        let out = body;
+        try {
+          const j = JSON.parse(body);
+          out = j.response ?? j.message ?? j.output ?? j.result ?? JSON.stringify(j, null, 2);
+        } catch (_) {}
+        if (!r.ok) append('err', 'Error ' + r.status + ': ' + out.slice(0, 2000));
+        else append('bot', out.slice(0, 8000));
+      } catch (err) {
+        append('err', String(err));
+      } finally {
+        send.disabled = false;
+        msg.focus();
+      }
+    });
+  </script>
+</body>
+</html>
