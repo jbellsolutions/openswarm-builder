@@ -1,0 +1,16 @@
+[Unit]
+Description=OpenSwarm Builder API
+After=network.target
+
+[Service]
+Type=simple
+User=openswarm
+WorkingDirectory=/opt/openswarm-builder
+Environment=OPENSWARM_BUILDER_HOME=/var/lib/openswarm
+Environment=OPENSWARM_HOME=/var/lib/openswarm/swarms
+ExecStart=/opt/openswarm-builder/.venv/bin/uvicorn openswarm_builder.adapters.http_server:app --host 0.0.0.0 --port 8090
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

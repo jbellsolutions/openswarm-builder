@@ -1,0 +1,3 @@
+[submodule "vendor/openswarm"]
+	path = vendor/openswarm
+	url = https://github.com/VRSEN/OpenSwarm.git
