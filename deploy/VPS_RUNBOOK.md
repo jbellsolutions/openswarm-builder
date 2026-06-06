@@ -3,7 +3,7 @@
 ## 1. Install
 
 ```bash
-git clone <repo> /opt/openswarm-builder
+git clone https://github.com/jbellsolutions/openswarm-builder.git /opt/openswarm-builder
 cd /opt/openswarm-builder
 git submodule update --init --recursive
 python3 -m venv .venv

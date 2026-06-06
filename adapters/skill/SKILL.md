@@ -5,6 +5,8 @@ description: Design, approve, and run custom OpenSwarm agent teams via openswarm
 
 # OpenSwarm Builder
 
+Repo: https://github.com/jbellsolutions/openswarm-builder
+
 Portable swarm factory: **design loop → approval gate → materialize → fleet**.
 
 ## When to use
@@ -21,7 +23,26 @@ export OPENSWARM_BUILDER_URL=http://127.0.0.1:8090
 export OPENSWARM_HOME=~/.openswarm/swarms
 ```
 
+Install:
+
+```bash
+git clone https://github.com/jbellsolutions/openswarm-builder.git
+cd openswarm-builder && git submodule update --init --recursive
+python3 -m venv .venv && source .venv/bin/activate
+pip install -e ".[dev]"
+```
+
 Start API: `openswarm-builder serve` or `uvicorn openswarm_builder.adapters.http_server:app --port 8090`
+
+CLI shortcuts:
+
+```bash
+openswarm-builder design "your swarm idea"
+openswarm-builder approve <spec_id>
+openswarm-builder build <spec_id>
+openswarm-builder list
+openswarm-builder health
+```
 
 ## Workflow
 
